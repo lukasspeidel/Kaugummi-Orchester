@@ -20,6 +20,7 @@ let pianosounds = [];
 let trompetensounds = [];
 let pianoplacing = 600;
 
+
 /** @type {any} */ let tasteAktiv;
 
 /** @type {Ball} */ let player;
@@ -64,13 +65,8 @@ function preload() {
 	pianosounds.push(loadSound("sound/E2-Piano.wav"));
 	pianosounds.push(loadSound("sound/F2-Piano.wav"));
 	pianosounds.push(loadSound("sound/G2-Piano.wav"));
-	trompetensounds.push(loadSound("sound/Trompete1.wav"));
-	trompetensounds.push(loadSound("sound/Trompete2.wav"));
-	trompetensounds.push(loadSound("sound/Trompete3.wav"));
-
-
+	trompetensounds.push(loadSound("sound/Trompetenton1.wav"));
 }
-
 
 function drawscreen() {
 	let blockcolor = color(100, 255, 0);
@@ -113,8 +109,13 @@ function drawscreen() {
 	sensors.push(trompeteSound);
 
 	//Sensor für keypresses
-	sensorTrompete = new Block(world, { x: 250, y: 150, w: 50, h: 300, color: "red", trigger: (ball, block) => {}}, { isStatic: true, label: "SensorTrompete", isSensor: true });
+	sensorTrompete = new Block(world, { x: 250, y: height/2, w: 50, h: 1200, color: "green", trigger: (ball, block) => {movetype = 1}}, 
+	{ isStatic: true, label: "SensorTrompete", isSensor: true });
 	blocks.push(sensorTrompete);
+	sensorKeyboard = new Block(world, { x: 2200, y: height/2, w: 50, h: 1200, color: "green", trigger: (ball, block) => {movetype = 2}}, 
+	{ isStatic: true, label: "SensorKeyboard", isSensor: true });
+	blocks.push(sensorKeyboard);
+	
 	
 	//Boden
 	blocks.push(
@@ -183,6 +184,7 @@ function drawscreen() {
 		);
 		blocks.push(tastchen);
 	}
+
 }
 
 function setup() {
@@ -245,29 +247,30 @@ function draw() {
 	pop();
 }
 
-function keyPressedPiano() {
-	if (keyCode === 32) {
-		// let swingY = height / 2 + sin(frameCount * 0.15) * 30;
-		if (tasteAktiv) {
-			Matter.Body.setPosition(tasteAktiv.body, {
-				x: tasteAktiv.body.position.x,
-				y: 600,
-			});
-
+//Keypress (movetype)
+let movetype = 0;
+function keyPressed() {
+	if(keyCode === 32){
+		switch (movetype) {
+		case 0:
 			Matter.Body.applyForce(player.body, player.body.position, {
-				x: 0.004,
-				y: -0.1,
+				x: 0.09  ,
+				y: 0.0,
 			});
-			tasteAktiv = null;
-		}
+			break;
+		case 1:
+			if (tasteAktiv) {
+				Matter.Body.setPosition(tasteAktiv.body, {
+					x: tasteAktiv.body.position.x,
+					y: 600,
+				});
+	
+				Matter.Body.applyForce(player.body, player.body.position, {
+					x: 0.004,
+					y: -0.1,
+				});
+				tasteAktiv = null;
+			}
+			break;
 	}
-}
-function keyPressedTrompete() {
-	if (keyCode === 32) {
-		let direction = 1;
-		Matter.Body.applyForce(player.body, player.body.position, {
-			x: 0.1,
-			y: 0.0,
-		});
-	}
-}
+	}}
