@@ -41,10 +41,17 @@ function preload() {
 	soundFormats("wav");
 	pianosounds.push(loadSound("sound/A0-Piano.wav"));
 	pianosounds.push(loadSound("sound/D0-Piano.wav"));
+<<<<<<< HEAD
 	pianosounds.push(loadSound("sound/E0-Piano.wav"));
 	pianosounds.push(loadSound("sound/F0-Piano.wav"));
 	pianosounds.push(loadSound("sound/G0-Piano.wav"));
 	pianosounds.push(loadSound("sound/C0-Piano.wav"));
+=======
+	pianosounds.push(loadSound("sound/EO-Piano.wav"));
+	pianosounds.push(loadSound("sound/F0-Piano.wav"));
+	pianosounds.push(loadSound("sound/G0-Piano.wav"));
+	pianosounds.push(loadSound("sound/A0-Piano.wav"));
+>>>>>>> 56e3f812f40bec8d601f7b84a642175f94bf73e2
 	pianosounds.push(loadSound("sound/B0-Piano.wav"));
 	pianosounds.push(loadSound("sound/C1-Piano.wav"));
 	pianosounds.push(loadSound("sound/D1-Piano.wav"));
@@ -53,16 +60,22 @@ function preload() {
 	pianosounds.push(loadSound("sound/G1-Piano.wav"));
 	pianosounds.push(loadSound("sound/A1-Piano.wav"));
 	pianosounds.push(loadSound("sound/B1-Piano.wav"));
+<<<<<<< HEAD
 	pianosounds.push(loadSound("sound/A2-Piano.wav"));
 	pianosounds.push(loadSound("sound/B2-Piano.wav"));
+=======
+>>>>>>> 56e3f812f40bec8d601f7b84a642175f94bf73e2
 	pianosounds.push(loadSound("sound/C2-Piano.wav"));
 	pianosounds.push(loadSound("sound/D2-Piano.wav"));
 	pianosounds.push(loadSound("sound/E2-Piano.wav"));
 	pianosounds.push(loadSound("sound/F2-Piano.wav"));
 	pianosounds.push(loadSound("sound/G2-Piano.wav"));
+<<<<<<< HEAD
 	trompetensounds.push(loadSound("sound/Trompete1.wav"));
 	trompetensounds.push(loadSound("sound/Trompete2.wav"));
 	trompetensounds.push(loadSound("sound/Trompete3.wav"));
+=======
+>>>>>>> 56e3f812f40bec8d601f7b84a642175f94bf73e2
 }
 
 
@@ -104,7 +117,7 @@ function drawscreen() {
 		}  },
 		{ isStatic: true, label: "TrompeteSound", isSensor: true }
 	);	
-	blocks.push(trompeteSound);
+	sensors.push(trompeteSound);
 
 	//Sensor für keypresses
 	sensorTrompete = new Block(world, { x: 250, y: 150, w: 50, h: 300, color: "red", trigger: (ball, block) => {}}, { isStatic: true, label: "SensorTrompete", isSensor: true });
@@ -230,7 +243,7 @@ function draw() {
 	background(0);
 
 	blocks.forEach((block) => block.draw());
-
+	sensors.forEach((sensor) => sensor.draw());
 
 	player.draw();
 
