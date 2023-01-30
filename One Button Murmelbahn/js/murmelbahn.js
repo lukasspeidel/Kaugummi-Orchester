@@ -22,25 +22,25 @@ let pianosounds = [];
 
 function preload() {
 	soundFormats("wav");
-	pianosounds.push(loadSound("sound/A0-Piano-Final.wav"));
-	pianosounds.push(loadSound("sound/D0-Piano-Final.wav"));
-	pianosounds.push(loadSound("sound/EO-Piano-Final-.wav"));
-	pianosounds.push(loadSound("sound/F0-Piano-Final-.wav"));
-	pianosounds.push(loadSound("sound/G0-Piano-Final-.wav"));
-	pianosounds.push(loadSound("sound/A0-Piano-Final.wav"));
-	pianosounds.push(loadSound("sound/B0-Piano-Final-.wav"));
-	pianosounds.push(loadSound("sound/C1-Piano-Final-.wav"));
-	pianosounds.push(loadSound("sound/D1-Piano-Final.wav"));
-	pianosounds.push(loadSound("sound/E1-Piano-Final-.wav"));
-	pianosounds.push(loadSound("sound/F1-Piano-Final-.wav"));
-	pianosounds.push(loadSound("sound/G1-Piano-Final.wav"));
-	pianosounds.push(loadSound("sound/A1-Piano-Final.wav"));
-	pianosounds.push(loadSound("sound/B1-Piano-Final-.wav"));
-	pianosounds.push(loadSound("sound/C2-Piano-Final.wav"));
-	pianosounds.push(loadSound("sound/D2-Piano-Final.wav"));
-	pianosounds.push(loadSound("sound/E2-Piano-Final-.wav"));
-	pianosounds.push(loadSound("sound/F2-Piano-Final-.wav"));
-	pianosounds.push(loadSound("sound/G2-Piano-Final.wav"));
+	pianosounds.push(loadSound("sound/A0-Piano.wav"));
+	pianosounds.push(loadSound("sound/D0-Piano.wav"));
+	pianosounds.push(loadSound("sound/EO-Piano.wav"));
+	pianosounds.push(loadSound("sound/F0-Piano.wav"));
+	pianosounds.push(loadSound("sound/G0-Piano.wav"));
+	pianosounds.push(loadSound("sound/A0-Piano.wav"));
+	pianosounds.push(loadSound("sound/B0-Piano.wav"));
+	pianosounds.push(loadSound("sound/C1-Piano.wav"));
+	pianosounds.push(loadSound("sound/D1-Piano.wav"));
+	pianosounds.push(loadSound("sound/E1-Piano.wav"));
+	pianosounds.push(loadSound("sound/F1-Piano.wav"));
+	pianosounds.push(loadSound("sound/G1-Piano.wav"));
+	pianosounds.push(loadSound("sound/A1-Piano.wav"));
+	pianosounds.push(loadSound("sound/B1-Piano.wav"));
+	pianosounds.push(loadSound("sound/C2-Piano.wav"));
+	pianosounds.push(loadSound("sound/D2-Piano.wav"));
+	pianosounds.push(loadSound("sound/E2-Piano.wav"));
+	pianosounds.push(loadSound("sound/F2-Piano.wav"));
+	pianosounds.push(loadSound("sound/G2-Piano.wav"));
 }
 
 function setup() {
