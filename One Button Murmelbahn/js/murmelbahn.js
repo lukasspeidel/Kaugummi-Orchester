@@ -141,26 +141,26 @@ function setup() {
 		mouseIsDragged = true;
 	});
 
-	mouse.on("mouseup", (/** @type {any} */ e) => {
-		if (!mouseIsDragged) {
-			let ball = new Ball(
-				world,
-				{
-					x: e.mouse.position.x,
-					y: e.mouse.position.y,
-					r: 15,
-					color: "yellow",
-				},
-				{ isStatic: false, restitution: 1, label: "Murmel" }
-			);
-			Body.applyForce(blocks[0].body, blocks[0].body.position, {
-				x: 0,
-				y: 2,
-			});
-			blocks.push(ball);
-		}
-		mouseIsDragged = false;
-	});
+	// mouse.on("mouseup", (/** @type {any} */ e) => {
+	// 	if (!mouseIsDragged) {
+	// 		let ball = new Ball(
+	// 			world,
+	// 			{
+	// 				x: e.mouse.position.x,
+	// 				y: e.mouse.position.y,
+	// 				r: 15,
+	// 				color: "yellow",
+	// 			},
+	// 			{ isStatic: false, restitution: 1, label: "Murmel" }
+	// 		);
+	// 		Body.applyForce(blocks[0].body, blocks[0].body.position, {
+	// 			x: 0,
+	// 			y: 2,
+	// 		});
+	// 		blocks.push(ball);
+	// 	}
+	// 	mouseIsDragged = false;
+	// });
 	mouse.mouse.pixelRatio = pixelDensity();
 
 	// process collisions - check whether block "Murmel" hits another Block
@@ -198,7 +198,7 @@ function draw() {
 	pop();
 }
 
-/* function keyPressed() {
+function keyPressed() {
 	if (keyCode === 32) {
 		// let swingY = height / 2 + sin(frameCount * 0.15) * 30;
 		if (tasteAktiv) {
@@ -209,9 +209,9 @@ function draw() {
 
 			Matter.Body.applyForce(player.body, player.body.position, {
 				x: 0.004,
-				y: -0.02,
+				y: -0.1,
 			});
 			tasteAktiv = null;
 		}
 	}
-} */
+}
