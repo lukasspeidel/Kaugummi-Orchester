@@ -22,7 +22,7 @@ let pianosounds = [];
 
 function preload() {
 	soundFormats("wav");
-	/* pianosounds.push(loadSound("sound/A0-Piano-Final.wav"));
+	pianosounds.push(loadSound("sound/A0-Piano-Final.wav"));
 	pianosounds.push(loadSound("sound/D0-Piano-Final.wav"));
 	pianosounds.push(loadSound("sound/EO-Piano-Final-.wav"));
 	pianosounds.push(loadSound("sound/F0-Piano-Final-.wav"));
@@ -41,8 +41,6 @@ function preload() {
 	pianosounds.push(loadSound("sound/E2-Piano-Final-.wav"));
 	pianosounds.push(loadSound("sound/F2-Piano-Final-.wav"));
 	pianosounds.push(loadSound("sound/G2-Piano-Final.wav"));
-	pianosounds.push(loadSound("sound/sound_A2-Piano-Final (1).wav"));
-	pianosounds.push(loadSound("sound/sound_B2-Piano-Final (1).wav")); */
 }
 
 function setup() {
