@@ -1,162 +1,171 @@
+/** @typedef { BlockCore | Block | Ball | Chain | Magnet | Parts | Polygon | PolygonFromPoints | PolygonFromSVG | Stack } Item */
+
 Matter.use("matter-wrap");
+const Engine = Matter.Engine;
+const Runner = Matter.Runner;
+const Bodies = Matter.Bodies;
+const Body = Matter.Body;
+const Events = Matter.Events;
+const World = Matter.World;
 
-let trampolineRed;
-let trampolineGreen;
-let ball;
-let drumstick1;
-let drumstick2;
-let ground;
-let boxes;
-let becken;
-let beckenSpacer1;
-let beckenSpacer2;
+/** @type {Matter.Engine} */ let engine;
+/** @type {Matter.World} */ let world;
+/** @type {Mouse} */ let mouse;
+let mouseIsDragged = false;
+// an array to contain all the blocks created
+/** @type {Item[]} */ let blocks = [];
+let pianosounds = [];
 
-let meinArschloch;
+/** @type {any} */ let tasteAktiv;
 
+/** @type {Ball} */ let player;
 
-
+function preload() {
+	soundFormats("wav");
+	/* pianosounds.push(loadSound("sound/A0-Piano-Final.wav"));
+	pianosounds.push(loadSound("sound/D0-Piano-Final.wav"));
+	pianosounds.push(loadSound("sound/EO-Piano-Final-.wav"));
+	pianosounds.push(loadSound("sound/F0-Piano-Final-.wav"));
+	pianosounds.push(loadSound("sound/G0-Piano-Final-.wav"));
+	pianosounds.push(loadSound("sound/A0-Piano-Final.wav"));
+	pianosounds.push(loadSound("sound/B0-Piano-Final-.wav"));
+	pianosounds.push(loadSound("sound/C1-Piano-Final-.wav"));
+	pianosounds.push(loadSound("sound/D1-Piano-Final.wav"));
+	pianosounds.push(loadSound("sound/E1-Piano-Final-.wav"));
+	pianosounds.push(loadSound("sound/F1-Piano-Final-.wav"));
+	pianosounds.push(loadSound("sound/G1-Piano-Final.wav"));
+	pianosounds.push(loadSound("sound/A1-Piano-Final.wav"));
+	pianosounds.push(loadSound("sound/B1-Piano-Final-.wav"));
+	pianosounds.push(loadSound("sound/C2-Piano-Final.wav"));
+	pianosounds.push(loadSound("sound/D2-Piano-Final.wav"));
+	pianosounds.push(loadSound("sound/E2-Piano-Final-.wav"));
+	pianosounds.push(loadSound("sound/F2-Piano-Final-.wav"));
+	pianosounds.push(loadSound("sound/G2-Piano-Final.wav"));
+	pianosounds.push(loadSound("sound/sound_A2-Piano-Final (1).wav"));
+	pianosounds.push(loadSound("sound/sound_B2-Piano-Final (1).wav")); */
+}
 
 function setup() {
-	const canvas = createCanvas(800, 600);
+	let canvas = createCanvas(1280, 720);
+	canvas.parent("thecanvas");
 
-	// create an engine
-	const engine = Matter.Engine.create();
-	const world = engine.world;
+	engine = Engine.create();
+	world = engine.world;
 
-	 // setup hit sound trommel1
-	 Matter.Events.on(engine, 'collisionStart', function(event) {
-		const pairs = event.pairs[0];
-		const bodyA = pairs.bodyA;
-		const bodyB = pairs.bodyB;
-		if (bodyA.label === "trampolineGreen" || bodyB.label === "ball") {
-		  trommel1.play();
-		}
-		if (bodyA.label === "ball" || bodyB.label === "trampolineGreen") {
-			trommel1.play();
-		  }
-		});
+	rectMode(CENTER);
+	ellipseMode(CENTER);
 
-	// setup hit sound trommel2
-	 Matter.Events.on(engine, 'collisionStart', function(event) {
-		const pairs = event.pairs[0];
-		const bodyA = pairs.bodyA;
-		const bodyB = pairs.bodyB;
-		if (bodyA.label === "trampolineRed" || bodyB.label === "ball") {
-			  trommel2.play();
-		}
-		if (bodyA.label === "ball" || bodyB.label === "trampolineRed") {
-				trommel2.play();
-		  }
-		});
-	
-	// setup hit sound becken
-	Matter.Events.on(engine, 'collisionStart', function(event) {
-		const pairs = event.pairs[0];
-		const bodyA = pairs.bodyA;
-		const bodyB = pairs.bodyB;
-		if (bodyA.label === "becken" || bodyB.label === "ball") {
-			  becken.play();
-		}
-		if (bodyA.label === "ball" || bodyB.label === "becken") {
-				becken.play();
-		  }
-		});	
-	
-	  // config wrap area
-	const wrap = {
-		min: { x: 0, y: 0 },
-		max: { x: width, y: height },
-	};
-	
-	becken = new Block(world, { x: 600, y: 320, w: 200, h: 8, color: 'white' },{label: "becken" });
-  // add revolute constraint for becken
-  	becken.constrainTo(null, { stiffness: 1, length: 0 });
-
-  // ball and becken spacer for limit
- 	 beckenSpacer1 = new Block(world, { x: 630, y: 265, w: 35, h: 50, color: 'white' }, {isStatic: true });
-		
-	 beckenSpacer2 = new Block(world, { x: 675, y: 385, w: 20, h: 50, color: 'pink' }, {isStatic: true });
-
-	 ball = new Ball(
-		world,
-		{ x: 50, y: 50, r: 20, color: "white"},  
-		{ density: 0.007, plugin: { wrap: wrap }, label: "ball"}
+	//Boden
+	blocks.push(
+		new BlockCore(
+			world,
+			{
+				x: width / 2,
+				y: 730,
+				w: 1280 * 2,
+				h: 40,
+				color: "red",
+			},
+			{ angle: radians(0), isStatic: true, friction: 0.0 }
 		)
-
-	
-	//drumsticks
-	drumstick1 = new Block(world, { x: 680, y: 300, w: 80, h: 2, color: 'white'},{ density: 0.0003, friction: 1, frictionAir: 0.001});
-	drumstick2 = new Block(world, { x: 680, y: 300, w: 80, h: 2, color: 'white'},{ density: 0.0003, friction: 1, frictionAir: 0.001});
-
-	//Trommeln
-	trampolineGreen = new Block(
-		world,
-		{ x: 50, y: 500, w: 150, h: 75, color: "green" },
-		{ isStatic: true, restitution: 1.1, angle: 10, label:"trampolineGreen" }
 	);
 
-	trampolineRed = new Block(
+	player = new Ball(
 		world,
-		{ x: 450, y: 500, w: 150, h: 75, color: "red" },
-		{ isStatic: true, restitution: 1.8, angle: 50, label: "trampolineRed" }
+		{
+			x: 115,
+			y: 220,
+			r: 20,
+			color: "magenta",
+		},
+		{
+			label: "Murmel",
+			isStatic: false,
+			density: 0.001,
+			restitution: 0.3,
+			friction: 0.1,
+			frictionAir: 0.0,
+		}
 	);
 
-	ground = new Block(
-		world,
-		{ x: 400, y: height - 25, w: 500, h: 25, color: "grey" },
-		{ isStatic: true }
-	);
+	mouse = new Mouse(engine, canvas, {
+		stroke: color(random(0, 256), random(0, 256), random(0, 256)),
+		strokeWeight: 3,
+	});
 
+	mouse.on("startdrag", (/** @type {any} */ _) => {
+		mouseIsDragged = true;
+	});
 
-	
+	mouse.on("mouseup", (/** @type {any} */ e) => {
+		if (!mouseIsDragged) {
+			let ball = new Ball(
+				world,
+				{
+					x: e.mouse.position.x,
+					y: e.mouse.position.y,
+					r: 15,
+					color: "yellow",
+				},
+				{ isStatic: false, restitution: 1, label: "Murmel" }
+			);
+			Body.applyForce(blocks[0].body, blocks[0].body.position, {
+				x: 0,
+				y: 2,
+			});
+			blocks.push(ball);
+		}
+		mouseIsDragged = false;
+	});
+	mouse.mouse.pixelRatio = pixelDensity();
+
+	// process collisions - check whether block "Murmel" hits another Block
+	Events.on(engine, "collisionStart", function (event) {
+		var pairs = event.pairs;
+		pairs.forEach((pair, i) => {
+			if (pair.bodyA.label == "Murmel") {
+				pair.bodyA.plugin.block.collideWith(pair.bodyB.plugin.block);
+			}
+			if (pair.bodyB.label == "Murmel") {
+				pair.bodyB.plugin.block.collideWith(pair.bodyA.plugin.block);
+			}
+		});
+	});
 	// run the engine
-	Matter.Runner.run(engine);
+	Runner.run(engine);
 }
-	//sound player
-function playTrommel1() {
-	var trommel1 = document.getElementById("trommel1");
-
-	trommel1.play();
-}
-function playTrommel2() {
-	var trommel2 = document.getElementById("trommel2");
-
-	trommel2.play();
-}
-function playBecken() {
-	var becken = document.getElementById("becken");
-
-	becken.play();
-}
-
-
-
 
 function draw() {
-	background("black");
+	Engine.update(engine);
+	const shiftX = -player.body.position.x + width / 2;
+	const shiftY = -player.body.position.y + height / 2;
 
-	trampolineGreen.draw();
-	trampolineRed.draw();
-	ball.draw();
-	ground.draw();
-	becken.draw();
-	becken.drawConstraints();
-	beckenSpacer1.draw();
-	beckenSpacer2.draw();
-	drumstick1.draw();
-	drumstick2.draw();
+	push();
+	translate(shiftX, shiftY);
+	background(0);
+
+	blocks.forEach((block) => block.draw());
+	player.draw();
+
+	mouse.draw();
+	mouse.setOffset({ x: -shiftX, y: -shiftY });
+	pop();
 }
 
-	// ball
-/* 	function ballSpawn(){
-	 	ball = new Ball(
-		world,
-		{ x: 50, y: 50, r: 20, color: "white"},  
-		{ density: 0.007, plugin: { wrap: wrap }, label: "ball"}
-		ball.push(new)
-	)}
+/* function keyPressed() {
+	if (keyCode === 32) {
+		// let swingY = height / 2 + sin(frameCount * 0.15) * 30;
+		if (tasteAktiv) {
+			Matter.Body.setPosition(tasteAktiv.body, {
+				x: tasteAktiv.body.position.x,
+				y: 600,
+			});
 
-	function spacebarSpawn(event) {
-		if (keyCode === 32) {
-		  ballSpawn();
-		}} */
+			Matter.Body.applyForce(player.body, player.body.position, {
+				x: 0.004,
+				y: -0.02,
+			});
+			tasteAktiv = null;
+		}
+	}
+} */
