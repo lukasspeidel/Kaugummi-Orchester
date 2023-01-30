@@ -14,11 +14,15 @@ const World = Matter.World;
 let mouseIsDragged = false;
 // an array to contain all the blocks created
 /** @type {Item[]} */ let blocks = [];
+/** @type {Item[]} */ let sensors = [];
+
 let pianosounds = [];
 
 /** @type {any} */ let tasteAktiv;
 
 /** @type {Ball} */ let player;
+
+let piano = undefined;
 
 function preload() {
 	soundFormats("wav");
@@ -45,30 +49,9 @@ function preload() {
 	pianosounds.push(loadSound("sound/sound_B2-Piano-Final (1).wav")); */
 }
 
-function setup() {
-	let canvas = createCanvas(1280, 720);
-	canvas.parent("thecanvas");
-
-	engine = Engine.create();
-	world = engine.world;
-
-	rectMode(CENTER);
-	ellipseMode(CENTER);
-
-	//Boden
-	blocks.push(
-		new BlockCore(
-			world,
-			{
-				x: width / 2,
-				y: 730,
-				w: 1280 * 2,
-				h: 40,
-				color: "red",
-			},
-			{ angle: radians(0), isStatic: true, friction: 0.0 }
-		)
-	);
+function drawscreen() {
+	let blockcolor = color(100, 255, 0);
+	let sensorcolor = color(50, 255, 10, 100);
 
 	player = new Ball(
 		world,
@@ -87,6 +70,67 @@ function setup() {
 			frictionAir: 0.0,
 		}
 	);
+	blocks.push(player);
+
+	//Boden
+	blocks.push(
+		new BlockCore(
+			world,
+			{
+				x: width / 2,
+				y: 730,
+				w: width * 100,
+				h: 40,
+				color: "red",
+			},
+			{ angle: radians(0), isStatic: true, friction: 0.0 }
+		)
+	);
+
+	for (let i = 0; i < 12; i++) {
+		blocks.push(
+			new Block(
+				world,
+				{
+					x: 115 + i * 70,
+					y: 700,
+					w: 65,
+					h: 40,
+					color: "white",
+				},
+				{ isStatic: true }
+			)
+		);
+	}
+
+	for (let i = 0; i < 12; i++) {
+		sensors.push(
+			new Block(
+				world,
+				{
+					x: 115 + i * 70,
+					y: 660,
+					w: 65,
+					h: 40,
+					color: sensorcolor,
+				},
+				{ isStatic: true, isSensor: true }
+			)
+		);
+	}
+}
+
+function setup() {
+	let canvas = createCanvas(1280, 720);
+	canvas.parent("thecanvas");
+
+	engine = Engine.create();
+	world = engine.world;
+
+	rectMode(CENTER);
+	ellipseMode(CENTER);
+
+	drawscreen();
 
 	mouse = new Mouse(engine, canvas, {
 		stroke: color(random(0, 256), random(0, 256), random(0, 256)),
@@ -145,6 +189,8 @@ function draw() {
 	background(0);
 
 	blocks.forEach((block) => block.draw());
+	sensors.forEach((sensors) => sensors.draw());
+
 	player.draw();
 
 	mouse.draw();
