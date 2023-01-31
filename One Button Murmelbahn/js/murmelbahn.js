@@ -66,6 +66,7 @@ function preload() {
 	pianosounds.push(loadSound("sound/F2-Piano.wav"));
 	pianosounds.push(loadSound("sound/G2-Piano.wav"));
 	trompetensounds.push(loadSound("sound/Trompetenton1.wav"));
+	trompetensounds.push(loadSound("sound/Trompetenton2.wav"));
 }
 
 function drawscreen() {
@@ -102,7 +103,7 @@ function drawscreen() {
 	trompeteSound = new Block(
 		world,
 		{ x: 150, y: 150, w: 50, h: 70, color: "red", trigger: (ball, block) => 
-		{trompetensounds[Math.floor(Math.random() * 3)].play(); 
+		{trompetensounds[Math.floor(Math.random() * 2)].play(); 
 		}  },
 		{ isStatic: true, label: "TrompeteSound", isSensor: true }
 	);	
@@ -112,7 +113,7 @@ function drawscreen() {
 	sensorTrompete = new Block(world, { x: 250, y: height/2, w: 50, h: 1200, color: "green", trigger: (ball, block) => {movetype = 1}}, 
 	{ isStatic: true, label: "SensorTrompete", isSensor: true });
 	blocks.push(sensorTrompete);
-	sensorKeyboard = new Block(world, { x: 2200, y: height/2, w: 50, h: 1200, color: "green", trigger: (ball, block) => {movetype = 2}}, 
+	sensorKeyboard = new Block(world, { x: 2025, y: height/2, w: 50, h: 1200, color: "green", trigger: (ball, block) => {movetype = 2}}, 
 	{ isStatic: true, label: "SensorKeyboard", isSensor: true });
 	blocks.push(sensorKeyboard);
 	
@@ -164,8 +165,15 @@ function drawscreen() {
 			);
 			blocks.push(taste);
 		}
+		
 	}
-	//Tasten schwarz
+	//Flöte
+	flöteBase = new Block(world, { x: 2200, y: 300, w: 400, h: 40, color: "red" }, { angle: radians(0), isStatic: true, friction: 0.0 });
+		blocks.push(flöteBase);
+flöteunterteilung1 = new Block(world, { x: 2250, y: 250, w: 50, h: 40, color: "red" }, { angle: radians(0), isStatic: true, friction: 0.0 });
+		blocks.push(flöteunterteilung1);	
+	
+		//Tasten schwarz
 	for (let col = 0; col < 20; col++) {
 		if (col == 2 || col == 6 || col == 9 || col == 13 || col == 16) {
 			continue;
