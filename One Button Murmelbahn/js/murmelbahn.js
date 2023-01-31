@@ -85,7 +85,7 @@ function drawscreen() {
 			label: "Murmel",
 			isStatic: false,
 			density: 0.0015,
-			restitution: 0.3,
+			restitution: 0.25,
 			friction: 0.1,
 			frictionAir: 0.0,
 		}
@@ -112,10 +112,10 @@ function drawscreen() {
 	//Sensor für keypresses
 	sensorTrompete = new Block(world, { x: 250, y: height/2, w: 50, h: 1200, color: "green", trigger: (ball, block) => {movetype = 1}}, 
 	{ isStatic: true, label: "SensorTrompete", isSensor: true });
-	blocks.push(sensorTrompete);
-	sensorKeyboard = new Block(world, { x: 2025, y: height/2, w: 50, h: 1200, color: "green", trigger: (ball, block) => {movetype = 2}}, 
+sensors.push(sensorTrompete);
+/* 	sensorKeyboard = new Block(world, { x: 2025, y: height/2, w: 50, h: 1200, color: "green", trigger: (ball, block) => {movetype = 2}}, 
 	{ isStatic: true, label: "SensorKeyboard", isSensor: true });
-	blocks.push(sensorKeyboard);
+sensors.push(sensorKeyboard); */
 	
 	
 	//Boden
@@ -132,6 +132,14 @@ function drawscreen() {
 			{ angle: radians(0), isStatic: true, friction: 0.0 }
 		)
 	);
+
+	//Begrenzungen
+	begrenzungPiano1 = new Block(world, { x: 1350+pianoplacing, y: 600, w: 40, h: 150, color: "red"}, 
+	{ isStatic: true, angle: PI/5});
+blocks.push(begrenzungPiano1);
+	begrenzungPiano2 = new Block(world, { x: 70+ pianoplacing, y: 600, w: 40, h: 120, color: "red"},
+	{ isStatic: true, angle: -PI/5} );
+blocks.push(begrenzungPiano2);
 
 	//Tasten weiß
 	for (let col = 0; col < 21; col++) {
@@ -168,11 +176,24 @@ function drawscreen() {
 		
 	}
 	//Flöte
-	flöteBase = new Block(world, { x: 2200, y: 300, w: 400, h: 40, color: "red" }, { angle: radians(0), isStatic: true, friction: 0.0 });
+	let wFlöteunterteilung = 30;
+	let hFlöteunterteilung = 30;
+	let xFlöteunterteilung = 2200;
+	let yFlöteunterteilung = 380;
+	let abstandFlöteunterteilung = 70;
+
+	flöteBase = new Block(world, { x: 2200, y: 400, w: 400, h: 20, color: "red" }, { angle: radians(0), isStatic: true, friction: 0.0 });
 		blocks.push(flöteBase);
-flöteunterteilung1 = new Block(world, { x: 2250, y: 250, w: 50, h: 40, color: "red" }, { angle: radians(0), isStatic: true, friction: 0.0 });
-		blocks.push(flöteunterteilung1);	
-	
+flöteunterteilung1 = new Block(world, { x: xFlöteunterteilung, y: yFlöteunterteilung, w: wFlöteunterteilung, h: hFlöteunterteilung, color: "red" }, 
+{ angle: PI/4, isStatic: true, friction: 0.0 });
+		blocks.push(flöteunterteilung1);
+flöteunterteilung2 = new Block(world, { x: xFlöteunterteilung+abstandFlöteunterteilung, y: yFlöteunterteilung, w: wFlöteunterteilung, h: hFlöteunterteilung, color: "red" }, 
+{ angle: PI/4, isStatic: true, friction: 0.0 });	
+		blocks.push(flöteunterteilung2);
+flöteunterteilung3 = new Block(world, { x: xFlöteunterteilung+abstandFlöteunterteilung*2, y: yFlöteunterteilung, w: wFlöteunterteilung, h: hFlöteunterteilung, color: "red" }, 
+{ angle: PI/4, isStatic: true, friction: 0.0 });
+		blocks.push(flöteunterteilung3);
+
 		//Tasten schwarz
 	for (let col = 0; col < 20; col++) {
 		if (col == 2 || col == 6 || col == 9 || col == 13 || col == 16) {
@@ -187,6 +208,7 @@ flöteunterteilung1 = new Block(world, { x: 2250, y: 250, w: 50, h: 40, color: "
 				h: 40,
 				color: "black",
 				stroke: "grey",
+				restitution: 0.25,
 			},
 			{ angle: radians(0), isStatic: true, friction: 0.0 }
 		);
@@ -238,7 +260,6 @@ function setup() {
 function draw() {
 	Engine.update(engine);
 	const shiftX = -player.body.position.x + width / 2;
-/* 	const shiftY = -player.body.position.y + height / 2; */
 	const shiftY = 0;
 
 	push();
@@ -274,7 +295,7 @@ function keyPressed() {
 				});
 	
 				Matter.Body.applyForce(player.body, player.body.position, {
-					x: 0.004,
+					x: 0.008,
 					y: -0.1,
 				});
 				tasteAktiv = null;
