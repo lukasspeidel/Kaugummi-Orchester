@@ -8,6 +8,7 @@ const Body = Matter.Body;
 const Events = Matter.Events;
 const World = Matter.World;
 
+
 /** @type {Matter.Engine} */ let engine;
 /** @type {Matter.World} */ let world;
 /** @type {Mouse} */ let mouse;
@@ -19,13 +20,15 @@ let mouseIsDragged = false;
 let pianosounds = [];
 let trompetensounds = [];
 let floetensounds = [];
-
-let Floetenton1;
+let schlagzeugsounds = [];
+let testSound;
+let output;
 /* let Floetenton2;
 let Floetenton3;
 let Floetenton4; */
 let pianoplacing = 600;
 let hintergrund;
+
 
 /** @type {any} */ let tasteAktiv;
 
@@ -45,6 +48,7 @@ let canvasElem;
 let off = { x: 0, y: 0 };
 
 function preload() {
+	soundFormats("wav");
 	pianosounds.push(loadSound("sound/A0-Piano.wav"));
 	pianosounds.push(loadSound("sound/D0-Piano.wav"));
 	pianosounds.push(loadSound("sound/E0-Piano.wav"));
@@ -70,20 +74,29 @@ function preload() {
 	pianosounds.push(loadSound("sound/E2-Piano.wav"));
 	pianosounds.push(loadSound("sound/F2-Piano.wav"));
 	pianosounds.push(loadSound("sound/G2-Piano.wav"));
+	
 	trompetensounds.push(loadSound("sound/Trompetenton1.wav"));
-	trompetensounds.push(loadSound("sound/Trompetenton2.wav"));
+ 	trompetensounds.push(loadSound("sound/Trompetenton2.wav"));
+	
 	floetensounds.push(loadSound("sound/Floetenton1.wav"));
-/* 	floetensounds.push(loadSound("sound/Floetenton2.wav"));
+	floetensounds.push(loadSound("sound/Floetenton2.wav"));
 	floetensounds.push(loadSound("sound/Floetenton3.wav"));
-	floetensounds.push(loadSound("sound/Floetenton4.wav")); */
+	floetensounds.push(loadSound("sound/Floetenton4.wav"));
+
+	schlagzeugsounds.push(loadSound("sound/Trommel1.wav"));
+	schlagzeugsounds.push(loadSound("sound/Trommel2.wav"));
+	schlagzeugsounds.push(loadSound("sound/Becken1.wav"));
+	schlagzeugsounds.push(loadSound("sound/Becken2.wav"));
+	schlagzeugsounds.push(loadSound("sound/Becken3.wav"));
 
 
+	//Bilder
 	hintergrund = loadImage("bilder/hintergrund.png");
 }
 
 function drawscreen() {
-	let restitutionPLayer = 0.25;
-	let densitiyPLayer = 0.0015;
+	let restitutionPlayer = 0.25;	
+	let densitiyPlayer = 0.0015;
 
 	player = new Ball(
 		world,
@@ -96,47 +109,23 @@ function drawscreen() {
 		{
 			label: "Murmel",
 			isStatic: false,
-			density: densitiyPLayer,
-			restitution: restitutionPLayer,
+			density: densitiyPlayer,
+			restitution: restitutionPlayer,
 			friction: 0.1,
 			frictionAir: 0.0,
 		}
 	);
 	blocks.push(player);
-
-	//Sensor für keypresses
-	sensorTrompete = new Block(
-		world,
-		{
-			x: 250,
-			y: height / 2,
-			w: 50,
-			h: 1200,
-			color: "green",
-			trigger: (ball, block) => {
-				movetype = 1;
-			},
-		},
-		{ isStatic: true, label: "SensorTrompete", isSensor: true }
-	);
-	sensors.push(sensorTrompete);
-	sensorKeyboard = new Block(
-		world,
-		{
-			x: 2045,
-			y: height / 4,
-			w: 50,
-			h: 480,
-			color: "green",
-			trigger: (ball, block) => {
-				(movetype = 2), (restitutionPLayer = 0);
-			},
-		},
-		{ isStatic: true, label: "SensorKeyboard", isSensor: true }
-	);
-	sensors.push(sensorKeyboard);
-
-	//Trompete block
+	
+//Sensor für keypresses
+	sensorTrompete = new Block(world, { x: 250, y: height/2, w: 50, h: 1200, color: "green", trigger: (ball, block) => {movetype = 1}}, 
+	{ isStatic: true, label: "SensorTrompete", isSensor: true });
+		sensors.push(sensorTrompete);
+	sensorKeyboard = new Block(world, { x: 2045, y: height/4, w: 50, h: 480, color: "green", trigger: (ball, block) => {movetype = 2, restitutionPlayer = 0}}, 
+	{ isStatic: true, label: "SensorKeyboard", isSensor: true });
+		sensors.push(sensorKeyboard);
+	
+//Trompete block
 	trompete = new Block(
 		world,
 		{ x: 50, y: 150, w: 150, h: 25, color: "purple" },
@@ -146,21 +135,14 @@ function drawscreen() {
 
 	trompeteSound = new Block(
 		world,
-		{
-			x: 150,
-			y: 150,
-			w: 50,
-			h: 70,
-			color: "red",
-			trigger: (ball, block) => {
-				trompetensounds[Math.floor(Math.random() * 2)].play();
-			},
-		},
+		{ x: 150, y: 150, w: 50, h: 70, color: "red", trigger: (ball, block) => 
+		{trompetensounds[0].play(); 
+		}  },
 		{ isStatic: true, label: "TrompeteSound", isSensor: true }
-	);
+	);	
 	sensors.push(trompeteSound);
 
-	//Boden
+//Boden
 	blocks.push(
 		new BlockCore(
 			world,
@@ -171,71 +153,181 @@ function drawscreen() {
 				h: 40,
 				color: "red",
 			},
-			{ angle: radians(0), isStatic: true, friction: 0.0 }
+			{ isStatic: true, friction: 0.0 }
 		)
 	);
 
-	//Begrenzungen
-	begrenzungPiano1 = new Block(
-		world,
-		{ x: 1350 + pianoplacing, y: 600, w: 40, h: 180, color: "red" },
-		{ isStatic: true, angle: PI / 5 }
-	);
-	blocks.push(begrenzungPiano1);
-	begrenzungPiano2 = new Block(
-		world,
-		{ x: 70 + pianoplacing, y: 600, w: 40, h: 180, color: "red" },
-		{ isStatic: true, angle: -PI / 5 }
-	);
-	blocks.push(begrenzungPiano2);
+//Begrenzungen
+	begrenzungPiano1 = new Block(world, { x: 1350+pianoplacing, y: 600, w: 40, h: 180, color: "red"}, 
+	{ isStatic: true, angle: PI/5});
+blocks.push(begrenzungPiano1);
+	begrenzungPiano2 = new Block(world, { x: 70+ pianoplacing, y: 600, w: 40, h: 180, color: "red"},
+	{ isStatic: true, angle: -PI/5} );
+blocks.push(begrenzungPiano2);
 
-	//Flöte
-	let xFlöteBase = 2250;
-	let yFlöteBase = 400;
+//Flöte
+	let xFlöteBase =	2250;
+	let yFlöteBase =	400;
 	let wFlöteunterteilung = 40;
 	let hFlöteunterteilung = 40;
 	let xFlöteunterteilung = 2200;
-	let yFlöteunterteilung = 385;
+	let yFlöteunterteilung = 385 ;
 	let abstandFlöteunterteilung = 85;
 	let wFlöteSensor = 70;
 	let hFlöteSensor = 10;
 
-	flöteBase = new Block(world, { x: xFlöteBase, y: yFlöteBase, w: 450, h: 20, color: "red" }, { angle: radians(0), isStatic: true, friction: 0.0, restitution: 0.0 });
-		blocks.push(flöteBase);
-	flötemundstück = new Block(world, { x: xFlöteBase-180, y: yFlöteBase-20, w: 140, h: 20, color: "red" }, { angle: PI/18, isStatic: true, friction: 0.0,	restitution: 0.0 });
-		blocks.push(flötemundstück);
-	flöteunterteilung1 = new Block(world, { x: xFlöteunterteilung, y: yFlöteunterteilung, w: wFlöteunterteilung, h: hFlöteunterteilung, color: "red" }, 
-	{ angle: PI/4, isStatic: true, friction: 0.0 });
-		blocks.push(flöteunterteilung1);
-	flöteunterteilung2 = new Block(world, { x: xFlöteunterteilung+abstandFlöteunterteilung, y: yFlöteunterteilung, w: wFlöteunterteilung, h: hFlöteunterteilung, color: "red" }, 
-	{ angle: PI/4, isStatic: true, friction: 0.0 });	
-		blocks.push(flöteunterteilung2);
-	flöteunterteilung3 = new Block(world, { x: xFlöteunterteilung+abstandFlöteunterteilung*2, y: yFlöteunterteilung, w: wFlöteunterteilung, h: hFlöteunterteilung, color: "red" }, 
-	{ angle: PI/4, isStatic: true, friction: 0.0 });
-		blocks.push(flöteunterteilung3);
+	flöteBase = new Block(
+		world,
+		{ x: xFlöteBase, y: yFlöteBase, w: 470, h: 20, color: "red" },
+		{ isStatic: true, friction: 1.5, restitution: 0.0 }
+	);
+	blocks.push(flöteBase);
+	flötemundstück = new Block(
+		world,
+		{
+			x: xFlöteBase - 180,
+			y: yFlöteBase - 20,
+			w: 140,
+			h: 20,
+			color: "red",
+		},
+		{ angle: PI / 18, isStatic: true, friction: 0.0, restitution: 0.0 }
+	);
+	blocks.push(flötemundstück);
+	flöteunterteilung1 = new Block(
+		world,
+		{
+			x: xFlöteunterteilung,
+			y: yFlöteunterteilung,
+			w: wFlöteunterteilung,
+			h: hFlöteunterteilung,
+			color: "red",
+		},
+		{ angle: PI / 4, isStatic: true, friction: 0.0, restitution: 0.0 }
+	);
+	blocks.push(flöteunterteilung1);
+	flöteunterteilung2 = new Block(
+		world,
+		{
+			x: xFlöteunterteilung + abstandFlöteunterteilung,
+			y: yFlöteunterteilung,
+			w: wFlöteunterteilung,
+			h: hFlöteunterteilung,
+			color: "red",
+		},
+		{ angle: PI / 4, isStatic: true, friction: 0.0, restitution: 0.0 }
+	);
+	blocks.push(flöteunterteilung2);
+	flöteunterteilung3 = new Block(
+		world,
+		{
+			x: xFlöteunterteilung + abstandFlöteunterteilung * 2,
+			y: yFlöteunterteilung,
+			w: wFlöteunterteilung,
+			h: hFlöteunterteilung,
+			color: "red",
+		},
+		{ angle: PI / 4, isStatic: true, friction: 0.0, restitution: 0.0 }
+	);
+	blocks.push(flöteunterteilung3);
 
-
-	flöteSensor1 = new Block(world, 
-		{ x: xFlöteunterteilung, y: yFlöteunterteilung-18, w: wFlöteSensor, h: hFlöteSensor, color: "green", trigger: (ball, block) => {floetensounds[0].play()} }, 
-	{ angle: PI/4, isSensor: true, label: "flötensensor1", isStatic: true});
-		sensors.push(flöteSensor1); 
-	flöteSensor2 = new Block(world, 
-		{ x: xFlöteunterteilung+abstandFlöteunterteilung, y: yFlöteunterteilung-18, w: wFlöteSensor, h: hFlöteSensor, color: "green",trigger: (ball, block) => {;} },
-	{ angle: PI/4, isSensor: true, label: "flötensensor2", isStatic: true});
-		sensors.push(flöteSensor2);
-	flöteSensor3 = new Block(world, 
-		{ x: xFlöteunterteilung+abstandFlöteunterteilung*2, y: yFlöteunterteilung-18, w: wFlöteSensor, h: hFlöteSensor, color: "green",trigger: (ball, block) => {} },
-	{ angle: PI/4, isSensor: true, label: "flötensensor3", isStatic: true});
-		sensors.push(flöteSensor3);
-	flöteSensor4 = new Block(world,
-	{ x: xFlöteunterteilung+abstandFlöteunterteilung*3, y: yFlöteunterteilung-18, w: wFlöteSensor, h: hFlöteSensor, color: "green",trigger: (ball, block) => {} },
-	{ angle: PI/2, isSensor: true, label: "flötensensor4", isStatic: true});
-		sensors.push(flöteSensor4);
-	sensorFlöteBewegung = new Block(world,
-		{ x: xFlöteunterteilung+abstandFlöteunterteilung*2.5, y: yFlöteunterteilung, w: wFlöteSensor, h: hFlöteSensor, color: "green",
-		trigger: (ball, block) => {movetype = 3, restitutionPLayer = 0.25, densitiyPLayer = 0.09 } },
-	{isSensor: true, label: "flötensensor4", isStatic: true});
-		sensors.push(sensorFlöteBewegung);
+	flöteSensor1 = new Block(
+		world,
+		{
+			x: xFlöteunterteilung,
+			y: yFlöteunterteilung - 18,
+			w: wFlöteSensor,
+			h: hFlöteSensor,
+			color: "green",
+			trigger: (ball, block) => {
+				floetensounds[0].play();
+			},
+		},
+		{
+			angle: PI / 3,
+			isSensor: true,
+			label: "flötensensor1",
+			isStatic: true,
+		}
+	);
+	sensors.push(flöteSensor1);
+	flöteSensor2 = new Block(
+		world,
+		{
+			x: xFlöteunterteilung + abstandFlöteunterteilung,
+			y: yFlöteunterteilung - 18,
+			w: wFlöteSensor,
+			h: hFlöteSensor,
+			color: "green",
+			trigger: (ball, block) => {
+				floetensounds[1].play();
+			},
+		},
+		{
+			angle: PI / 3,
+			isSensor: true,
+			label: "flötensensor2",
+			isStatic: true,
+		}
+	);
+	sensors.push(flöteSensor2);
+	flöteSensor3 = new Block(
+		world,
+		{
+			x: xFlöteunterteilung + abstandFlöteunterteilung * 2,
+			y: yFlöteunterteilung - 18,
+			w: wFlöteSensor,
+			h: hFlöteSensor,
+			color: "green",
+			trigger: (ball, block) => {
+				floetensounds[2].play();
+			},
+		},
+		{
+			angle: PI / 3,
+			isSensor: true,
+			label: "flötensensor3",
+			isStatic: true,
+		}
+	);
+	sensors.push(flöteSensor3);
+	flöteSensor4 = new Block(
+		world,
+		{
+			x: xFlöteunterteilung + abstandFlöteunterteilung * 3.5,
+			y: yFlöteunterteilung - 18,
+			w: wFlöteSensor,
+			h: hFlöteSensor,
+			color: "green",
+			trigger: (ball, block) => {
+				floetensounds[3].play();
+			},
+		},
+		{
+			angle: PI / 2,
+			isSensor: true,
+			label: "flötensensor4",
+			isStatic: true,
+		}
+	);
+	sensors.push(flöteSensor4);
+	sensorFlöteBewegung = new Block(
+		world,
+		{
+			x: xFlöteunterteilung + abstandFlöteunterteilung * 2.5,
+			y: yFlöteunterteilung,
+			w: wFlöteSensor,
+			h: hFlöteSensor,
+			color: "green",
+			trigger: (ball, block) => {
+				(movetype = 3),
+					(restitutionPlayer = 0.25),
+					(densitiyPlayer = 0.09);
+			},
+		},
+		{ isSensor: true, label: "flötensensor4", isStatic: true }
+	);
+	sensors.push(sensorFlöteBewegung);
 
 	//Schlagzeug
 	let xSchlagzeugTrommel = 3020;
@@ -243,20 +335,132 @@ function drawscreen() {
 	let wSchlagzeugTrommel = 200;
 	let hSchlagzeugTrommel = 100;
 
-	schlagzeugTrommel1 = new Block(world, { x: xSchlagzeugTrommel, y: ySchlagzeugTrommel, w: wSchlagzeugTrommel, h: hSchlagzeugTrommel, color: "red" }, 
-	{ isStatic: true, friction: 0.0, restitution: 0.9 , angle: -PI/6});
-		blocks.push(schlagzeugTrommel1);
-	schlagzeugTrommel2 = new Block(world, { x: xSchlagzeugTrommel-400, y: ySchlagzeugTrommel-10, w: wSchlagzeugTrommel, h: hSchlagzeugTrommel, color: "red" },
-	{ isStatic: true, friction: 0.0, restitution: 1.0 , angle: PI/4});
-		blocks.push(schlagzeugTrommel2);
-		
-		//Tasten weiß
+	//Trommeln
+	schlagzeugTrommel1 = new Block(
+		world,
+		{
+			x: xSchlagzeugTrommel,
+			y: ySchlagzeugTrommel,
+			w: wSchlagzeugTrommel,
+			h: hSchlagzeugTrommel,
+			color: "red",
+			trigger: (ball, block) => {
+				schlagzeugsounds[0].play();
+			},
+		},
+		{ isStatic: true, friction: 0.0, restitution: 0.65, angle: -PI / 6 }
+	);
+	blocks.push(schlagzeugTrommel1);
+	schlagzeugTrommel2 = new Block(
+		world,
+		{
+			x: xSchlagzeugTrommel - 400,
+			y: ySchlagzeugTrommel - 10,
+			w: wSchlagzeugTrommel,
+			h: hSchlagzeugTrommel,
+			color: "red",
+			trigger: (ball, block) => {
+				schlagzeugsounds[1].play();
+			},
+		},
+		{ isStatic: true, friction: 0.0, restitution: 1.5, angle: PI / 4 }
+	);
+	blocks.push(schlagzeugTrommel2);
+	
+	let xBecken = xSchlagzeugTrommel + 150;
+	let yBecken = ySchlagzeugTrommel - 300;
+
+	//Drumsticks
+	drumstick1 = new Block(
+		world,
+		{
+			x: xBecken,
+			y: yBecken+20,
+			w: 80,
+			h: 2,
+			color: "white",
+		},
+		{ density: 0.0003, friction: 5, frictionAir: 0.001, frictionStatic: 1.5 }
+	);
+	blocks.push(drumstick1);
+	drumstick2 = new Block(
+		world,
+		{
+			x: xBecken,
+			y: yBecken+10,
+			w: 80,
+			h: 2,
+			color: "white",
+		},
+		{ density: 0.0003, friction: 5, frictionAir: 0.001, frictionStatic: 1.5 }
+	);
+	blocks.push(drumstick2);
+
+	//Becken
+	becken = new Block(
+		world,
+		{
+			x: xBecken,
+			y: yBecken,
+			w: 200,
+			h: 8,
+			color: "white",
+			trigger: (ball, block) => {
+				schlagzeugsounds[3].play();
+			},
+		},
+		{ label: "becken" }
+	);
+	becken.constrainTo(null, { stiffness: 1, length: 0 });
+	blocks.push(becken);
+
+	beckenSpacer1 = new Block(
+		world,
+		{
+			x: xBecken-50,
+			y: yBecken-50,
+			w: 35,
+			h: 30,
+			color: "white",
+		},
+		{ isStatic: true }
+	);
+	blocks.push(beckenSpacer1);
+
+	beckenSpacer2 = new Block(
+		world,
+		{
+			x: xBecken+50,
+			y: yBecken+50,
+			w: 20,
+			h: 50,
+			color: "pink",
+		},
+		{ isStatic: true }
+	);
+	blocks.push(beckenSpacer2);
+
+	beckenSpacer3 = new Block(
+		world,
+		{
+			x: xBecken-50,
+			y: yBecken+50,
+			w: 20,
+			h: 50,
+			color: "pink",
+		},
+		{ isStatic: true }
+	);
+	blocks.push(beckenSpacer3);
+
+	//Klavier
+	//Tasten weiß
 	for (let col = 0; col < 21; col++) {
 		for (let row = 0; row < 1; row++) {
 			let taste = new Block(
 				world,
 				{
-					x: 120 + pianoplacing + col * (size + gap),
+					x: 120 + pianoplacing+ col * (size + gap),
 					y: 600 + row * (size + gap),
 					w: size,
 					h: size,
@@ -274,6 +478,7 @@ function drawscreen() {
 							});
 							let pianosound = pianosounds[col];
 							pianosound.play();
+						
 						}
 					},
 				},
@@ -281,15 +486,17 @@ function drawscreen() {
 			);
 			blocks.push(taste);
 		}
+		
 	}
+	
 
-	//Tasten schwarz
+		//Tasten schwarz
 	for (let col = 0; col < 20; col++) {
 		if (col == 2 || col == 6 || col == 9 || col == 13 || col == 16) {
 			continue;
 		}
 		let tastchen = new Block(
-			world,
+			world, 
 			{
 				x: 150 + pianoplacing + col * 60,
 				y: 565,
@@ -303,6 +510,7 @@ function drawscreen() {
 		);
 		blocks.push(tastchen);
 	}
+
 }
 
 function setup() {
@@ -324,6 +532,7 @@ function setup() {
 	mouse.on("startdrag", (/** @type {any} */ _) => {
 		mouseIsDragged = true;
 	});
+
 
 	mouse.mouse.pixelRatio = pixelDensity();
 
@@ -365,39 +574,41 @@ function draw() {
 //Keypress (movetype)
 let movetype = 0;
 function keyPressed() {
-	if (keyCode === 32) {
+	if(keyCode === 32){
 		switch (movetype) {
-			case 0:
-				Matter.Body.applyForce(player.body, player.body.position, {
-					x: 0.09,
-					y: 0.0,
+		case 0:
+			Matter.Body.applyForce(player.body, player.body.position, {
+				x: 0.09  ,
+				y: 0.0,
+			});
+			break;
+		case 1:
+			if (tasteAktiv) {
+				Matter.Body.setPosition(tasteAktiv.body, {
+					x: tasteAktiv.body.position.x,
+					y: 600,
 				});
-				break;
-			case 1:
-				if (tasteAktiv) {
-					Matter.Body.setPosition(tasteAktiv.body, {
-						x: tasteAktiv.body.position.x,
-						y: 600,
-					});
+	
+				Matter.Body.applyForce(player.body, player.body.position, {
+					x: 0.009,
+					y: -0.105,
+				});
+				tasteAktiv = null;
+			}
+			break;
+		case 2:
+			Matter.Body.applyForce(player.body, player.body.position, {
+				x: 0.008,
+				y: -0.07 ,
+			});
+			break;
+		case 3:
+			Matter.Body.applyForce(player.body, player.body.position, {
+				x: 0.12,
+				y: 0.0,
+			});
 
-					Matter.Body.applyForce(player.body, player.body.position, {
-						x: 0.009,
-						y: -0.105,
-					});
-					tasteAktiv = null;
-				}
-				break;
-			case 2:
-				Matter.Body.applyForce(player.body, player.body.position, {
-					x: 0.008,
-					y: -0.07,
-				});
-				break;
-			case 3:
-				Matter.Body.applyForce(player.body, player.body.position, {
-					x: 0.11,
-					y: 0.0,
-				});
-		}
-	}
+			
+
 }
+	}}
