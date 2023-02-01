@@ -73,7 +73,9 @@ function preload() {
 	pianosounds.push(loadSound("sound/G2-Piano.wav"));
 	trompetensounds.push(loadSound("sound/Trompetenton1.wav"));
 	trompetensounds.push(loadSound("sound/Trompetenton2.wav"));
-/* 	Floetenton1 = loadSound("One Button Murmelbahn\sound\Floetenton1.wav"); */
+	console.log("eh");
+	Floetenton1 = loadSound("../sound/Floetenton1.wav");
+	console.log("ey");
 /* 	Floetenton2 = loadSound("sound/Floetenton2.wav");
 	Floetenton3 = loadSound("sound/Floetenton3.wav");
 	Floetenton4 = loadSound("sound/Floetenton4.wav");
@@ -140,7 +142,7 @@ function drawscreen() {
 				h: 40,
 				color: "red",
 			},
-			{ angle: radians(0), isStatic: true, friction: 0.0 }
+			{isStatic: true, friction: 0.0 }
 		)
 	);
 
@@ -163,7 +165,7 @@ blocks.push(begrenzungPiano2);
 	let wFlöteSensor = 70;
 	let hFlöteSensor = 10;
 
-	flöteBase = new Block(world, { x: xFlöteBase, y: yFlöteBase, w: 450, h: 20, color: "red" }, { angle: radians(0), isStatic: true, friction: 0.0, restitution: 0.0 });
+	flöteBase = new Block(world, { x: xFlöteBase, y: yFlöteBase, w: 470, h: 20, color: "red" }, { isStatic: true, friction: 1.5, restitution: 0.0 });
 		blocks.push(flöteBase);
 	flötemundstück = new Block(world, { x: xFlöteBase-180, y: yFlöteBase-20, w: 140, h: 20, color: "red" }, { angle: PI/18, isStatic: true, friction: 0.0,	restitution: 0.0 });
 		blocks.push(flötemundstück);
@@ -179,7 +181,7 @@ blocks.push(begrenzungPiano2);
 
 
 	flöteSensor1 = new Block(world, 
-		{ x: xFlöteunterteilung, y: yFlöteunterteilung-18, w: wFlöteSensor, h: hFlöteSensor, color: "green", trigger: (ball, block) => {/* Floetenton1.play() */} }, 
+		{ x: xFlöteunterteilung, y: yFlöteunterteilung-18, w: wFlöteSensor, h: hFlöteSensor, color: "green", trigger: (ball, block) => {Floetenton1.play()} }, 
 	{ angle: PI/4, isSensor: true, label: "flötensensor1", isStatic: true});
 		sensors.push(flöteSensor1); 
 	flöteSensor2 = new Block(world, 
@@ -201,19 +203,35 @@ blocks.push(begrenzungPiano2);
 		sensors.push(sensorFlöteBewegung);
 
 	//Schlagzeug
-	let xSchlagzeugTrommel = 3020;
+	let xSchlagzeugTrommel = 3050;
 	let ySchlagzeugTrommel = 530;
 	let wSchlagzeugTrommel = 200;
 	let hSchlagzeugTrommel = 100;
 
 	schlagzeugTrommel1 = new Block(world, { x: xSchlagzeugTrommel, y: ySchlagzeugTrommel, w: wSchlagzeugTrommel, h: hSchlagzeugTrommel, color: "red" }, 
-	{ isStatic: true, friction: 0.0, restitution: 0.9 , angle: -PI/6});
+	{ isStatic: true, friction: 0.0, restitution: 0.85  , angle: -PI/6});
 		blocks.push(schlagzeugTrommel1);
 	schlagzeugTrommel2 = new Block(world, { x: xSchlagzeugTrommel-400, y: ySchlagzeugTrommel-10, w: wSchlagzeugTrommel, h: hSchlagzeugTrommel, color: "red" },
-	{ isStatic: true, friction: 0.0, restitution: 1.0 , angle: PI/4});
+	{ isStatic: true, friction: 0.0, restitution: 1.5 , angle: PI/4});
 		blocks.push(schlagzeugTrommel2);
+
+	drumstick1 = new Block(world, { x: xSchlagzeugTrommel, y: ySchlagzeugTrommel, w: 80, h: 2, color: 'white'},{ density: 0.0003, friction: 1.5, frictionAir: 0.001});
+		blocks.push(drumstick1);
+	drumstick2 = new Block(world, { x: xSchlagzeugTrommel, y: ySchlagzeugTrommel, w: 80, h: 2, color: 'white'},{ density: 0.0003, friction: 1.5, frictionAir: 0.001});
+		blocks.push(drumstick2);
+
+
+	becken = new Block(world, { x: xSchlagzeugTrommel+50, y: ySchlagzeugTrommel-300, w: 200, h: 8, color: 'white' },{label: "becken" });
+  	becken.constrainTo(null, { stiffness: 1, length: 0 });
+	  blocks.push(becken);
+	
+	beckenSpacer1 = new Block(world, { x: xSchlagzeugTrommel+85, y: ySchlagzeugTrommel-250, w: 35, h: 50, color: 'white' }, {isStatic: true });
+	blocks.push(beckenSpacer1);
 		
-		//Tasten weiß
+	beckenSpacer2 = new Block(world, { x: xSchlagzeugTrommel, y: ySchlagzeugTrommel-350, w: 20, h: 50, color: 'pink' }, {isStatic: true });
+	blocks.push(beckenSpacer2);
+
+	//Tasten weiß
 	for (let col = 0; col < 21; col++) {
 		for (let row = 0; row < 1; row++) {
 			let taste = new Block(
@@ -241,7 +259,7 @@ blocks.push(begrenzungPiano2);
 						}
 					},
 				},
-				{ angle: radians(0), isStatic: true, friction: 0.0 }
+				{ isStatic: true, friction: 0.0 }
 			);
 			blocks.push(taste);
 		}
@@ -265,7 +283,7 @@ blocks.push(begrenzungPiano2);
 				stroke: "grey",
 				restitution: 0.25,
 			},
-			{ angle: radians(0), isStatic: true, friction: 0.0 }
+			{ isStatic: true, friction: 0.0 }
 		);
 		blocks.push(tastchen);
 	}
