@@ -17,17 +17,19 @@ let mouseIsDragged = false;
 /** @type {Item[]} */ let blocks = [];
 /** @type {Item[]} */ let sensors = [];
 
+let vectors = [];
+
 let pianosounds = [];
 let trompetensounds = [];
 let floetensounds = [];
 let schlagzeugsounds = [];
-let testSound;
-let output;
-/* let Floetenton2;
-let Floetenton3;
-let Floetenton4; */
+
+
 let pianoplacing = 600;
 let hintergrund;
+let kaugummi;
+let beckenBild;
+
 
 
 /** @type {any} */ let tasteAktiv;
@@ -91,7 +93,10 @@ function preload() {
 
 
 	//Bilder
-	hintergrund = loadImage("bilder/hintergrund.png");
+	hintergrund = loadImage("bilder/Hintergrund.png");
+	kaugummi = loadImage("bilder/Kaugummi.png");
+	beckenBild = loadImage("bilder/Becken.png");
+
 }
 
 function drawscreen() {
@@ -104,7 +109,7 @@ function drawscreen() {
 			x: 45,
 			y: 120,
 			r: 20,
-			color: "magenta",
+			image: kaugummi,
 		},
 		{
 			label: "Murmel",
@@ -135,7 +140,7 @@ function drawscreen() {
 
 	trompeteSound = new Block(
 		world,
-		{ x: 150, y: 150, w: 50, h: 70, color: "red", trigger: (ball, block) => 
+		{ x: 150, y: 150, w: 50, h: 70, color: "green", trigger: (ball, block) => 
 		{trompetensounds[0].play(); 
 		}  },
 		{ isStatic: true, label: "TrompeteSound", isSensor: true }
@@ -348,7 +353,7 @@ blocks.push(begrenzungPiano2);
 				schlagzeugsounds[0].play();
 			},
 		},
-		{ isStatic: true, friction: 0.0, restitution: 0.65, angle: -PI / 6 }
+		{ isStatic: true, friction: 0.0, restitution: 0.75, angle: -PI / 6 }
 	);
 	blocks.push(schlagzeugTrommel1);
 	schlagzeugTrommel2 = new Block(
@@ -367,15 +372,17 @@ blocks.push(begrenzungPiano2);
 	);
 	blocks.push(schlagzeugTrommel2);
 	
-	let xBecken = xSchlagzeugTrommel + 150;
+	let xBecken = xSchlagzeugTrommel + 185;
 	let yBecken = ySchlagzeugTrommel - 300;
+	let wBecken = 200;
+	let hBecken = 10;
 
 	//Drumsticks
 	drumstick1 = new Block(
 		world,
 		{
-			x: xBecken,
-			y: yBecken+20,
+			x: xBecken+50,
+			y: yBecken-20,
 			w: 80,
 			h: 2,
 			color: "white",
@@ -386,8 +393,8 @@ blocks.push(begrenzungPiano2);
 	drumstick2 = new Block(
 		world,
 		{
-			x: xBecken,
-			y: yBecken+10,
+			x: xBecken+50,
+			y: yBecken-10,
 			w: 80,
 			h: 2,
 			color: "white",
@@ -396,31 +403,46 @@ blocks.push(begrenzungPiano2);
 	);
 	blocks.push(drumstick2);
 
+	stopperDrumsticks = new Block(
+		world,
+		{
+			x: xBecken+115,
+			y: yBecken+45,
+			w: 20,
+			h: 50,
+			color: "pink",
+		},
+		{ isStatic: true }
+	);
+	blocks.push(stopperDrumsticks);
+
 	//Becken
 	becken = new Block(
 		world,
 		{
 			x: xBecken,
 			y: yBecken,
-			w: 200,
-			h: 8,
+			w: wBecken,
+			h: hBecken,
+			image: beckenBild,
 			color: "white",
 			trigger: (ball, block) => {
 				schlagzeugsounds[3].play();
 			},
 		},
-		{ label: "becken" }
+		{ label: "becken", restitution: 0 }
 	);
 	becken.constrainTo(null, { stiffness: 1, length: 0 });
 	blocks.push(becken);
+
 
 	beckenSpacer1 = new Block(
 		world,
 		{
 			x: xBecken-50,
 			y: yBecken-50,
-			w: 35,
-			h: 30,
+			w: 20,
+			h: 50,
 			color: "white",
 		},
 		{ isStatic: true }
@@ -447,11 +469,12 @@ blocks.push(begrenzungPiano2);
 			y: yBecken+50,
 			w: 20,
 			h: 50,
-			color: "pink",
+			color: "olive",
 		},
 		{ isStatic: true }
 	);
 	blocks.push(beckenSpacer3);
+
 
 	//Klavier
 	//Tasten weiß
@@ -563,6 +586,7 @@ function draw() {
 
 	blocks.forEach((block) => block.draw());
 	sensors.forEach((sensor) => sensor.draw());
+	vectors.forEach((vector) => vector.draw());
 
 	player.draw();
 
@@ -576,12 +600,14 @@ let movetype = 0;
 function keyPressed() {
 	if(keyCode === 32){
 		switch (movetype) {
+			//Trompete
 		case 0:
 			Matter.Body.applyForce(player.body, player.body.position, {
 				x: 0.09  ,
 				y: 0.0,
 			});
 			break;
+			//Klavier
 		case 1:
 			if (tasteAktiv) {
 				Matter.Body.setPosition(tasteAktiv.body, {
@@ -596,12 +622,14 @@ function keyPressed() {
 				tasteAktiv = null;
 			}
 			break;
+			//Flöte (Loch zu Loch)
 		case 2:
 			Matter.Body.applyForce(player.body, player.body.position, {
 				x: 0.008,
 				y: -0.07 ,
 			});
 			break;
+			//Flöte (rausschießen)
 		case 3:
 			Matter.Body.applyForce(player.body, player.body.position, {
 				x: 0.12,
