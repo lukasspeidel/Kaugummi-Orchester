@@ -78,7 +78,7 @@ function preload() {
 	Floetenton3 = loadSound("sound/Floetenton3.wav");
 	Floetenton4 = loadSound("sound/Floetenton4.wav");
  */
-/* 	hintergrund = loadImage("bilder/hintergrund.png"); */
+	hintergrund = loadImage("bilder/hintergrund.png");
 }
 
 function drawscreen() {
@@ -102,8 +102,16 @@ function drawscreen() {
 		}
 	);
 	blocks.push(player);
-
-	//Trompete block
+	
+//Sensor für keypresses
+	sensorTrompete = new Block(world, { x: 250, y: height/2, w: 50, h: 1200, color: "green", trigger: (ball, block) => {movetype = 1}}, 
+	{ isStatic: true, label: "SensorTrompete", isSensor: true });
+		sensors.push(sensorTrompete);
+	sensorKeyboard = new Block(world, { x: 2045, y: height/2, w: 50, h: 1200, color: "green", trigger: (ball, block) => {movetype = 2, restitutionPLayer = 0}}, 
+	{ isStatic: true, label: "SensorKeyboard", isSensor: true });
+		sensors.push(sensorKeyboard);
+	
+//Trompete block
 	trompete = new Block(
 		world,
 		{ x: 50, y: 150, w: 150, h: 25, color: "purple" },
@@ -120,17 +128,7 @@ function drawscreen() {
 	);	
 	sensors.push(trompeteSound);
 
-	//Sensor für keypresses
-	sensorTrompete = new Block(world, { x: 250, y: height/2, w: 50, h: 1200, color: "green", trigger: (ball, block) => {movetype = 1}}, 
-	{ isStatic: true, label: "SensorTrompete", isSensor: true });
-sensors.push(sensorTrompete);
-	sensorKeyboard = new Block(world, { x: 2045, y: height/2, w: 50, h: 1200, color: "green", trigger: (ball, block) => {movetype = 2, restitutionPLayer = 0}}, 
-	{ isStatic: true, label: "SensorKeyboard", isSensor: true });
-sensors.push(sensorKeyboard);
-
-	
-	
-	//Boden
+//Boden
 	blocks.push(
 		new BlockCore(
 			world,
@@ -145,11 +143,11 @@ sensors.push(sensorKeyboard);
 		)
 	);
 
-	//Begrenzungen
-	begrenzungPiano1 = new Block(world, { x: 1350+pianoplacing, y: 600, w: 40, h: 150, color: "red"}, 
+//Begrenzungen
+	begrenzungPiano1 = new Block(world, { x: 1350+pianoplacing, y: 600, w: 40, h: 180, color: "red"}, 
 	{ isStatic: true, angle: PI/5});
 blocks.push(begrenzungPiano1);
-	begrenzungPiano2 = new Block(world, { x: 70+ pianoplacing, y: 600, w: 40, h: 120, color: "red"},
+	begrenzungPiano2 = new Block(world, { x: 70+ pianoplacing, y: 600, w: 40, h: 180, color: "red"},
 	{ isStatic: true, angle: -PI/5} );
 blocks.push(begrenzungPiano2);
 
@@ -196,9 +194,20 @@ blocks.push(begrenzungPiano2);
 	{ angle: PI/2, isSensor: true, label: "flötensensor4", isStatic: true});
 		sensors.push(flöteSensor4);
 	sensorFlöteBewegung = new Block(world,
-		{ x: xFlöteunterteilung+abstandFlöteunterteilung*2.5, y: yFlöteunterteilung, w: wFlöteSensor, h: hFlöteSensor, color: "green",trigger: (ball, block) => {movetype = 3} },
+		{ x: xFlöteunterteilung+abstandFlöteunterteilung*2.5, y: yFlöteunterteilung, w: wFlöteSensor, h: hFlöteSensor, color: "green",
+		trigger: (ball, block) => {movetype = 3, restitutionPLayer = 0.25} },
 	{isSensor: true, label: "flötensensor4", isStatic: true});
 		sensors.push(sensorFlöteBewegung);
+
+	//Schlagzeug
+	let xSchlagzeugTrommel = 2500;
+	let ySchlagzeugTrommel = 550;
+	let wSchlagzeugTrommel = 200;
+	let hSchlagzeugTrommel = 100;
+
+	schlagzeugTrommel1 = new Block(world, { x: xSchlagzeugTrommel, y: ySchlagzeugTrommel, w: wSchlagzeugTrommel, h: hSchlagzeugTrommel, color: "red" }, 
+	{ isStatic: true, friction: 0.0, restitution: 1.0 , angle: PI/6});
+		blocks.push(schlagzeugTrommel1);
 		
 		//Tasten weiß
 	for (let col = 0; col < 21; col++) {
@@ -305,7 +314,7 @@ function draw() {
 
 	push();
 	translate(shiftX, shiftY);
-	background(10);
+	background(hintergrund);
 
 	blocks.forEach((block) => block.draw());
 	sensors.forEach((sensor) => sensor.draw());
@@ -336,8 +345,8 @@ function keyPressed() {
 				});
 	
 				Matter.Body.applyForce(player.body, player.body.position, {
-					x: 0.008,
-					y: -0.1,
+					x: 0.009,
+					y: -0.105,
 				});
 				tasteAktiv = null;
 			}
@@ -350,7 +359,7 @@ function keyPressed() {
 			break;
 		case 3:
 			Matter.Body.applyForce(player.body, player.body.position, {
-				x: 0.13,
+				x: 0.1,
 				y: 0.0,
 			});
 
