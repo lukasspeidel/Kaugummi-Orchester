@@ -72,13 +72,12 @@ function preload() {
 	pianosounds.push(loadSound("sound/G2-Piano.wav"));
 	trompetensounds.push(loadSound("sound/Trompetenton1.wav"));
 	trompetensounds.push(loadSound("sound/Trompetenton2.wav"));
-/* 	Floetenton1 = loadSound("One Button Murmelbahn\sound\Floetenton1.wav"); */
-/* 	Floetenton2 = loadSound("sound/Floetenton2.wav");
 	floetensounds.push(loadSound("sound/Floetenton1.wav"));
-	/* 	Floetenton2 = loadSound("sound/Floetenton2.wav");
-	Floetenton3 = loadSound("sound/Floetenton3.wav");
-	Floetenton4 = loadSound("sound/Floetenton4.wav");
- */
+/* 	floetensounds.push(loadSound("sound/Floetenton2.wav"));
+	floetensounds.push(loadSound("sound/Floetenton3.wav"));
+	floetensounds.push(loadSound("sound/Floetenton4.wav")); */
+
+
 	hintergrund = loadImage("bilder/hintergrund.png");
 }
 
@@ -217,7 +216,7 @@ function drawscreen() {
 
 
 	flöteSensor1 = new Block(world, 
-		{ x: xFlöteunterteilung, y: yFlöteunterteilung-18, w: wFlöteSensor, h: hFlöteSensor, color: "green", trigger: (ball, block) => {/* Floetenton1.play() */} }, 
+		{ x: xFlöteunterteilung, y: yFlöteunterteilung-18, w: wFlöteSensor, h: hFlöteSensor, color: "green", trigger: (ball, block) => {floetensounds[0].play()} }, 
 	{ angle: PI/4, isSensor: true, label: "flötensensor1", isStatic: true});
 		sensors.push(flöteSensor1); 
 	flöteSensor2 = new Block(world, 
