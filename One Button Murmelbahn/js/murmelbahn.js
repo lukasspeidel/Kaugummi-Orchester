@@ -45,8 +45,8 @@ let FloeteVordergrundBild;
 
 /** @type {Ball} */ let player;
 
-let colorBlocks = "red";
-let colorSensors = "green";
+let colorBlocks = "";
+let colorSensors = "";
 
 let tasten = [];
 let tastchen = [];
@@ -116,7 +116,7 @@ function preload() {
 	StänderBeckenBild = loadImage("bilder/StänderBecken.png");
 	DrumstickBild = loadImage("bilder/Drumstick.png");
 	KlavierBild = loadImage("bilder/Klavier.png");
-/* 	FloeteHintergrundBild = loadImage("bilder/FloeteHintergrund.png"); */
+
 	FloeteVordergrundBild = loadImage("bilder/FloeteHintergrundRework.png");
 	FloeteHintergrundBild = loadImage("bilder/FloeteVordergrundRework.png");
 }
@@ -128,7 +128,7 @@ function drawscreen() {
 	player = new Ball(
 		world,
 		{
-			x: 45,
+			x: 40,
 			y: 120,
 			r: 20,
 			image: kaugummi,
@@ -156,7 +156,7 @@ function drawscreen() {
 //Trompete block
 	trompete = new Block(
 		world,
-		{ x: 50, y: 150, w: 150, h: 25, color: "purple" },
+		{ x: 50, y: 150, w: 150, h: 25, color: "" },
 		{ isStatic: true, label: "Trompete" }
 	);
 	blocks.push(trompete);
@@ -170,12 +170,12 @@ function drawscreen() {
 	);	
 	sensors.push(trompeteSound);
 //Bild für Trompete
-	trompeteBild = new Block(world, { x: 50, y: 170, w: 150, h: 25, color: "purple", image: TrompeteBild },
+	trompeteBild = new Block(world, { x: 50, y: 170, w: 150, h: 25, color: "", image: TrompeteBild },
 	{ isStatic: true, isSensor: true });
 	blocks.push(trompeteBild);
 
 //Boden
-	blocks.push(
+/* 	blocks.push(
 		new BlockCore(
 			world,
 			{
@@ -187,7 +187,7 @@ function drawscreen() {
 			},
 			{ isStatic: true, friction: 0.0 }
 		)
-	);
+	); */
 
 //Begrenzungen
 	begrenzungPiano1 = new Block(world, { x: 1350+pianoplacing, y: 600, w: 40, h: 180, color: colorBlocks}, 
@@ -209,17 +209,17 @@ blocks.push(begrenzungPiano2);
 	let hFlöteSensor = 10;
 
 	//Bilder Flöte
-	flöteBildHinten = new Block(world, { x: xFlöteBase+18, y: yFlöteBase-20, w: 20, h: 20, color: colorBlocks, image: FloeteVordergrundBild, },
+	flöteBildHinten = new Block(world, { x: xFlöteBase+18, y: yFlöteBase-30, w: 20, h: 20, color: "", image: FloeteVordergrundBild, },
 	{ isStatic: true, isSensor: true });
-	blocks.push(flöteBildHinten);
+	sensors.push(flöteBildHinten);
 	
-	flöteBildVorne = new Block(world, { x: xFlöteBase+18, y: yFlöteBase-20, w: 20, h: 20, color: colorBlocks, image: FloeteHintergrundBild, },
+	flöteBildVorne = new Block(world, { x: xFlöteBase+18, y: yFlöteBase-40, w: 20, h: 20, color: "", image: FloeteHintergrundBild, },
 		{ isStatic: true, isSensor: true });
-	sensors.push(flöteBildVorne);
+	blocks.push(flöteBildVorne);
 
 	flöteBase = new Block(
 		world,
-		{ x: xFlöteBase, y: yFlöteBase, w: 480, h: 20, color: colorBlocks },
+		{ x: xFlöteBase, y: yFlöteBase, w: 530, h: 20, color: colorBlocks },
 		{ isStatic: true, friction: 1.5, restitution: 0.0 }
 	);
 	blocks.push(flöteBase);
@@ -271,6 +271,19 @@ blocks.push(begrenzungPiano2);
 		{ angle: PI / 4, isStatic: true, friction: 0.0, restitution: 0.0 }
 	);
 	blocks.push(flöteunterteilung3);
+
+	flötePositionsHalter = new Block(
+		world,
+		{
+			x: xFlöteunterteilung + abstandFlöteunterteilung * 3.5,
+			y: yFlöteBase - 10,
+			w: wFlöteSensor+30,
+			h: hFlöteSensor,
+			color: colorBlocks,
+},
+		{ isStatic: true, angle: -PI / 32, }
+	);
+	blocks.push(flötePositionsHalter);
 
 	flöteSensor1 = new Block(
 		world,
@@ -357,13 +370,15 @@ blocks.push(begrenzungPiano2);
 		{
 			x: xFlöteunterteilung + abstandFlöteunterteilung * 2.5,
 			y: yFlöteunterteilung,
-			w: wFlöteSensor,
+			w: wFlöteSensor-40,
 			h: hFlöteSensor,
 			color: colorSensors,
 			trigger: (ball, block) => {
-				(movetype = 3),
+				(movetype = 3),/* Matter.Body.setPosition(player.body, {
+					x: xFlöteunterteilung + abstandFlöteunterteilung * 2.5+30,
+					y: yFlöteunterteilung,}); */
 					(restitutionPlayer = 0.25),
-					(densitiyPlayer = 0.15);
+					(densitiyPlayer = 0.25);
 			},
 		},
 		{ isSensor: true, label: "flötensensor4", isStatic: true }
@@ -375,13 +390,13 @@ blocks.push(begrenzungPiano2);
 	let ySchlagzeugTrommel = 530;
 	let wSchlagzeugTrommel = 200;
 	let hSchlagzeugTrommel = 100;
-
+	restitutionTrommel1 = 0.5;
 	//Trommeln
 	schlagzeugTrommel1 = new Block(
 		world,
 		{
 			x: xSchlagzeugTrommel,
-			y: ySchlagzeugTrommel,
+			y: ySchlagzeugTrommel-100,
 			w: wSchlagzeugTrommel,
 			h: hSchlagzeugTrommel,
 			color: colorBlocks,
@@ -390,14 +405,28 @@ blocks.push(begrenzungPiano2);
 				schlagzeugsounds[0].play();
 			},
 		},
-		{ isStatic: true, friction: 0.0, restitution: 0.7, angle: -PI / 6 }
+		{ isStatic: true, friction: 0.0, restitution: 0.5, angle: -PI / 4.5 }
 	);
 	blocks.push(schlagzeugTrommel1);
+	
+	schlagzeugTrommel1Stopper = new Block(
+		world,
+		{
+			x: xSchlagzeugTrommel+30,
+			y: ySchlagzeugTrommel-100+40,
+			w: wSchlagzeugTrommel+10,
+			h: hSchlagzeugTrommel+80,
+			color: colorBlocks,
+		},
+		{ isStatic: true, friction: 0.0,  angle: -PI / 4.5 }
+	);
+	blocks.push(schlagzeugTrommel1Stopper);
+
 	schlagzeugTrommel2 = new Block(
 		world,
 		{
-			x: xSchlagzeugTrommel - 400,
-			y: ySchlagzeugTrommel - 10,
+			x: xSchlagzeugTrommel - 180,
+			y: ySchlagzeugTrommel + 50,
 			w: wSchlagzeugTrommel,
 			h: hSchlagzeugTrommel,
 			color: colorBlocks,
@@ -406,12 +435,12 @@ blocks.push(begrenzungPiano2);
 				schlagzeugsounds[1].play();
 			},
 		},
-		{ isStatic: true, friction: 0.0, restitution: 1.5, angle: PI / 4 }
+		{ isStatic: true, friction: 0.0, restitution: 0.5, angle: PI / 4 }
 	);
 	blocks.push(schlagzeugTrommel2);
 	
-	let xBecken = xSchlagzeugTrommel + 185;
-	let yBecken = ySchlagzeugTrommel - 20;
+	let xBecken = xSchlagzeugTrommel + 170;
+	let yBecken = ySchlagzeugTrommel - 350;
 	let wBecken = 200;
 	let hBecken = 10;
 
@@ -419,27 +448,27 @@ blocks.push(begrenzungPiano2);
 	drumstick1 = new Block(
 		world,
 		{
-			x: xBecken+50,
+			x: xBecken+65,
 			y: yBecken-20,
 			w: 80,
 			h: 5,
-			color: "white",
+			color: "",
 			image: DrumstickBild,
 		},
-		{ density: 0.0003, friction: 5, frictionAir: 0.001, frictionStatic: 1.5 }
+		{ density: 0.00003, friction: 5, frictionAir: 0.0001, frictionStatic: 1.5 }
 	);
 	blocks.push(drumstick1);
 	drumstick2 = new Block(
 		world,
 		{
-			x: xBecken+50,
+			x: xBecken+65,
 			y: yBecken-10,
 			w: 80,
 			h: 5,
-			color: "white",
+			color: "",
 			image: DrumstickBild,
 		},
-		{ density: 0.0003, friction: 5, frictionAir: 0.001, frictionStatic: 1.5 }
+		{ density: 0.00003, friction: 5, frictionAir: 0.0001, frictionStatic: 1.5 }
 	);
 	blocks.push(drumstick2);
 
@@ -450,7 +479,7 @@ blocks.push(begrenzungPiano2);
 			y: yBecken+45,
 			w: 20,
 			h: 50,
-			color: "pink",
+			color: "",
 		},
 		{ isStatic: true }
 	);
@@ -465,9 +494,10 @@ blocks.push(begrenzungPiano2);
 			w: wBecken,
 			h: hBecken,
 			image: beckenBild,
-			color: "white",
+			color: "",
 			trigger: (ball, block) => {
 				schlagzeugsounds[3].play();
+				restitutionTrommel1 = 1.2;
 			},
 		},
 		{ label: "becken", restitution: 0 }
@@ -479,11 +509,11 @@ blocks.push(begrenzungPiano2);
 	beckenSpacer1 = new Block(
 		world,
 		{
-			x: xBecken-50,
-			y: yBecken-50,
-			w: 20,
-			h: 50,
-			color: "white",
+			x: xBecken-30,
+			y: yBecken-80,
+			w: 10,
+			h: 50+70,
+			color: "",
 		},
 		{ isStatic: true }
 	);
@@ -494,9 +524,9 @@ blocks.push(begrenzungPiano2);
 		{
 			x: xBecken+50,
 			y: yBecken+50,
-			w: 20,
+			w: 10,
 			h: 50,
-			color: "pink",
+			color: "",
 		},
 		{ isStatic: true }
 	);
@@ -507,9 +537,9 @@ blocks.push(begrenzungPiano2);
 		{
 			x: xBecken-50,
 			y: yBecken+50,
-			w: 20,
+			w: 10,
 			h: 50,
-			color: "olive",
+			color: "",
 		},
 		{ isStatic: true }
 	);
@@ -520,15 +550,44 @@ blocks.push(begrenzungPiano2);
 		world,
 		{
 			x: xBecken+35,
-			y: yBecken+250,
+			y: yBecken+375,
 			w: 20,
 			h: 50,
-			color: "grey",
+			color: "",
 			image: StänderBeckenBild,
 		},
 		{ isStatic: true, isSensor: true }
 	);
 	sensors.push(bildStänderBecken);
+	//Bild Trommel Ständer
+	bildStänderTrommel1 = new Block(
+		world,
+		{
+			x: xSchlagzeugTrommel+35,
+			y: ySchlagzeugTrommel+101,
+			w: 20,
+			h: 50,
+			color: "",
+			image: StänderTrommel1Bild,
+		},
+		{ isStatic: true, isSensor: true }
+	);
+	sensors.push(bildStänderTrommel1);
+	
+
+	bildStänderTrommel2 = new Block(
+		world,
+		{
+			x: xSchlagzeugTrommel - 200,
+			y: ySchlagzeugTrommel + 220,
+			w: 20,
+			h: 50,
+			color: "grey",
+			image: StänderTrommel2Bild,
+		},
+		{ isStatic: true, isSensor: true }
+	);
+	sensors.push(bildStänderTrommel2);
 
 //Bild Klavier
 	bildKlavier = new Block(
@@ -693,14 +752,14 @@ function keyPressed() {
 			//Flöte (Loch zu Loch)
 		case 2:
 			Matter.Body.applyForce(player.body, player.body.position, {
-				x: 0.008,
+				x: 0.0078,
 				y: -0.07 ,
 			});
 			break;
 			//Flöte (rausschießen)
 		case 3:
 			Matter.Body.applyForce(player.body, player.body.position, {
-				x: 0.12,
+				x: 0.15,
 				y: 0.0,
 			});
 
