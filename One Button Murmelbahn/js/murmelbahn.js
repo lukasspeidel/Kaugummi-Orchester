@@ -45,8 +45,8 @@ let FloeteVordergrundBild;
 
 /** @type {Ball} */ let player;
 
-let colorBlocks = "";
-let colorSensors = "";
+let colorBlocks = "red";
+let colorSensors = "green";
 
 let tasten = [];
 let tastchen = [];
