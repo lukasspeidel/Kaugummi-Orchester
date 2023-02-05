@@ -38,6 +38,7 @@ let DrumstickBild;
 let KlavierBild;
 let FloeteHintergrundBild;
 let FloeteVordergrundBild;
+let MuelleimerBild;
 
 
 
@@ -45,8 +46,8 @@ let FloeteVordergrundBild;
 
 /** @type {Ball} */ let player;
 
-let colorBlocks = "red";
-let colorSensors = "green";
+let colorBlocks = "";
+let colorSensors = "";
 
 let tasten = [];
 let tastchen = [];
@@ -107,18 +108,24 @@ function preload() {
 	//Bilder
 	hintergrund = loadImage("bilder/Hintergrund.png");
 	kaugummi = loadImage("bilder/Kaugummi.png");
+	
 	beckenBild = loadImage("bilder/Becken.png");
 	Trommel1Bild = loadImage("bilder/Trommel1.png");
 	Trommel2Bild = loadImage("bilder/Trommel2.png");
+	
 	TrompeteBild = loadImage("bilder/Trompete.png");
+	
 	StänderTrommel1Bild = loadImage("bilder/StänderTrommel1.png");
 	StänderTrommel2Bild = loadImage("bilder/StänderTrommel2.png");
 	StänderBeckenBild = loadImage("bilder/StänderBecken.png");
 	DrumstickBild = loadImage("bilder/Drumstick.png");
+	
 	KlavierBild = loadImage("bilder/Klavier.png");
 
 	FloeteVordergrundBild = loadImage("bilder/FloeteHintergrundRework.png");
 	FloeteHintergrundBild = loadImage("bilder/FloeteVordergrundRework.png");
+	
+	MuelleimerBild = loadImage("bilder/Muelleimer.png");
 }
 
 function drawscreen() {
@@ -196,6 +203,24 @@ blocks.push(begrenzungPiano1);
 	begrenzungPiano2 = new Block(world, { x: 70+ pianoplacing, y: 600, w: 40, h: 180, color: colorBlocks},
 	{ isStatic: true, angle: -PI/5} );
 blocks.push(begrenzungPiano2);
+
+//Reset Sensoren
+resetSensorPiano2 = new Block(world, { x: 2100, y: 600, w: 40, h: 400, color: colorSensors, trigger: (ball, block) => {
+	Matter.Body.setPosition(player.body, {
+		x: 700,
+		y: 350,
+	});
+},}, 
+	{ isStatic: true, isSensor: true, angle: PI/5} );
+sensors.push(resetSensorPiano2);
+	resetSensorPiano1 = new Block(world, { x: 500, y: 600, w: 40, h: 600, color: colorSensors,trigger: (ball, block) => {
+		Matter.Body.setPosition(player.body, {
+			x: 700,
+			y: 350,
+		});
+	}},
+	{ isStatic: true, angle: -PI/5, isSensor: true} );
+sensors.push(resetSensorPiano1);
 
 //Flöte
 	let xFlöteBase =	2250;
@@ -588,6 +613,27 @@ blocks.push(begrenzungPiano2);
 		{ isStatic: true, isSensor: true }
 	);
 	sensors.push(bildStänderTrommel2);
+	//Mülleimer
+
+	muelleimer = new PolygonFromSVG(world,
+		{ x: xSchlagzeugTrommel, y: ySchlagzeugTrommel+200, fromFile: 'vectors/Muelleimer.svg', color: "colorBlocks", scale: 0.3, color:"" },
+		{ isStatic: true, friction: 0.0}
+	  );
+	blocks.push(muelleimer);
+
+	bildMuelleimer = new Block(
+		world,
+		{
+			x: xSchlagzeugTrommel,
+			y: ySchlagzeugTrommel+160,
+			w: 20,
+			h: 50,
+			color: "",
+			image: MuelleimerBild,
+		},
+		{ isStatic: true, isSensor: true }
+	);
+	sensors.push(bildMuelleimer);
 
 //Bild Klavier
 	bildKlavier = new Block(
